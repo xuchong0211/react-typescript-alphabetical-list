@@ -1,13 +1,14 @@
 import typescript from "@rollup/plugin-typescript";
 import nodeResolve from "@rollup/plugin-commonjs";
 import babel from "@rollup/plugin-babel";
-import commonjs from "@rollup/plugin-node-resolve";
+// import commonjs from "@rollup/plugin-node-resolve";
 import { resolve } from "path";
 
 export default {
-  input: resolve(__dirname, "./src/lib/main.ts"),
+  input: resolve(__dirname, "./src/lib/index.ts"),
   output: {
-    file: "./src/astro-project/src/components/lib",
+    // file: "./src/astro-project/src/components/lib",
+    file: resolve(__dirname, "./dist"),
     format: "cjs",
   },
   plugins: [

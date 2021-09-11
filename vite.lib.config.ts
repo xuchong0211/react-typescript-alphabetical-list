@@ -14,13 +14,13 @@ export default defineConfig({
   build: {
     minify: "esbuild",
     lib: {
-      entry: resolve(__dirname, "./src/lib/main.ts"),
-      name: "myLib",
+      entry: resolve(__dirname, "./src/lib/index.ts"),
+      name: "AlphabetList",
       formats: ["es"],
       // formats: [],
-      fileName: (format) => `MyLib.${format}.jsx`,
+      fileName: (format) => `AlphabetList.${format}.jsx`,
     },
-    outDir: "./astro-project/src/components/lib",
+    outDir: resolve(__dirname, "./dist/lib"),
     watch: {},
     rollupOptions: {
       // 确保外部化处理那些你不想打包进库的依赖

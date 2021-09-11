@@ -1,11 +1,13 @@
-import React, { FC, useRef, useState } from "react";
+import React, {FC, useMemo, useRef, useState} from "react";
 import "./style.css";
 
-const charStr = "*ABCDEFGHIJKLMNOPQRSTUVWXYZ#";
-const boxClientTop = 0;
+export interface PropsInterface {
+  data: DataAlphabetType[];
+  item: FC<{ item: AnyObject }>;
+  topOffset :number;
+}
 
 export interface DataType {
-  id: string;
   name: string;
   [key: string]: any;
 }
@@ -15,27 +17,37 @@ export interface DataAlphabetType extends DataType{
   [key: string]: any;
 }
 
-const List = (props: { data: DataAlphabetType[]; item: FC<{ item: AnyObject }> }) => {
-  const [isTouching, setIsTouching] = useState(false);
-  const [lastChar, setLastChar] = useState("A");
+const List = (props: PropsInterface) => {
+  const {topOffset = 0} = props;
+  const [isTouching, setIsTouching] = useState<boolean>(false);
+  const [lastChar, setLastChar] = useState<string>("A");
+  const charStr = useMemo(() => {
+    console.log("calculate char index");
+    const charStr = "#ABCDEFGHIJKLMNOPQRSTUVWXYZ*";
+    return charStr;
+  }, [props.data]);
   const charBarRef = useRef(null);
   const countryListRef = useRef(null);
 
   const getChar = (clientY: number) => {
+
+    // @ts-ignore
     const charHeight = charBarRef.current.offsetHeight / charStr.length;
-    const index = Math.floor((clientY - boxClientTop) / charHeight);
+    const index = Math.floor((clientY - topOffset) / charHeight);
     return charStr[index];
   };
 
   const gotoChar = (char: string) => {
+    // console.log("char 1111111111111111111111111", char);
     if (char === lastChar) {
       return false;
     }
     setLastChar(char);
-    if (char === "*") {
+
+    if (char === "#") {
       // @ts-ignore
       countryListRef.current.scrollTop = 0;
-    } else if (char === "#") {
+    } else if (char === "*") {
       // @ts-ignore
       countryListRef.current.scrollTop = countryListRef.current.scrollHeight;
     }
@@ -52,31 +64,38 @@ const List = (props: { data: DataAlphabetType[]; item: FC<{ item: AnyObject }> }
   };
 
   const touchMove = (e: any) => {
-    // e.preventDefault();
+    e.preventDefault();
     const char = getChar(e.touches[0].clientY);
     gotoChar(char);
   };
 
   const touchEnd = (e: any) => {
-    // e.preventDefault();
+    e.preventDefault();
     setIsTouching(false);
   };
 
-  const Component = props.item;
+  const ItemComponent = props.item;
 
   return (
     <div className="alphabet-list">
       <div className="alphabet-list-border" ref={countryListRef}>
         {props.data.map((item, index) => {
           const { first, ...rest } = item;
+          const { name } = rest;
+          const divProps : any = {key : "alphabet_list_" + index};
+          if (item.first) {
+            divProps["data-key"] = item.name.slice(0, 1);
+          }
           return (
-            <div key={"list_" + index}>
-              {item.first && <div data-key={item.name.slice(0, 1)}></div>}
-              <Component item={rest} />
+            <div {...divProps}>
+              {
+                (name === "#" ) ? null : (name === "*" ) ? null :
+                    <ItemComponent item={rest} />
+              }
             </div>
           );
         })}
-        <div className="char-list-border">
+        <div className="char-list-border" style={{paddingTop: topOffset}}>
           <ul
             className="char-list"
             ref={charBarRef}
@@ -86,14 +105,14 @@ const List = (props: { data: DataAlphabetType[]; item: FC<{ item: AnyObject }> }
           >
             {charStr.split("").map((char, index) => {
               return (
-                <li className="char-item" key={index}>
-                  {char}
+                <li className="char-item" key={"alphabet_list_char_"+index}>
+                  {char === "*" ? "..." : char}
                 </li>
               );
             })}
           </ul>
         </div>
-        {isTouching && <div className="char-tip">{lastChar}</div>}
+        {isTouching && <div className="char-tip">{lastChar === "*" ? "..." : lastChar}</div>}
       </div>
     </div>
   );

@@ -1,15 +1,9 @@
-import React, {FC, PropsWithChildren, useMemo} from "react";
+import React, {
+  PropsWithChildren,
+  ReactElement,
+  useMemo
+} from "react";
 import List, {DataAlphabetType, DataType} from "./List";
-
-export const SampleItem = ({ item }: { item: DataType }) => {
-  return (
-    <div className="item" key={item.id}>
-      <div>{item.name}</div>
-      <div>{item.description}</div>
-    </div>
-  );
-};
-
 
 const assignFirst = (list: DataType []) : DataAlphabetType[] => {
   const obj: AnyObject = {};
@@ -22,7 +16,7 @@ const assignFirst = (list: DataType []) : DataAlphabetType[] => {
     }
     return 0;
   });
-  return sorted.map((item) => {
+  const result = sorted.map((item) => {
     let first = false;
     const firstChar = item.name.slice(0, 1);
     if (obj[firstChar]) {
@@ -33,9 +27,17 @@ const assignFirst = (list: DataType []) : DataAlphabetType[] => {
     }
     return { ...item, first };
   });
+  return [{ name:"#", first:true }, ...result, { name:"*", first:true }];
 };
 
-export default ({ data, children }: PropsWithChildren<{ data: any[] }>) => {
+export default ({ data, indexTopOffset, children }: { data: any[], children: ReactElement, indexTopOffset? : number } ) => {
+
+  indexTopOffset = indexTopOffset === undefined ? 0 : indexTopOffset;
   const list = useMemo(() => assignFirst(data), []);
-  return <List data={list} item={children as FC} />;
+  //todo throw exception if children is an array.
+  const item = useMemo(() => (props: PropsWithChildren<AnyObject>) => {
+    const childProps = children?.props || {};
+    return <children.type {...{...props, ...childProps}}/>;
+  }, []);
+  return <List data={list} item={item} topOffset={indexTopOffset}/>;
 };
