@@ -35,9 +35,9 @@ export default ({ data, indexTopOffset, children }: { data: any[], children: Rea
   indexTopOffset = indexTopOffset === undefined ? 0 : indexTopOffset;
   const list = useMemo(() => assignFirst(data), []);
   //todo throw exception if children is an array.
-  const item = useMemo(() => (props: PropsWithChildren<AnyObject>) => {
+  const renderItem = useMemo(() => (props: PropsWithChildren<AnyObject>) => {
     const childProps = children?.props || {};
     return <children.type {...{...props, ...childProps}}/>;
   }, []);
-  return <List data={list} item={item} topOffset={indexTopOffset}/>;
+  return <List data={list} renderItem={renderItem} topOffset={indexTopOffset}/>;
 };

@@ -3,7 +3,7 @@ import "./style.css";
 
 export interface PropsInterface {
   data: DataAlphabetType[];
-  item: FC<{ item: AnyObject }>;
+  renderItem: FC<{ item: AnyObject }>;
   topOffset :number;
 }
 
@@ -74,7 +74,7 @@ const List = (props: PropsInterface) => {
     setIsTouching(false);
   };
 
-  const ItemComponent = props.item;
+  const ItemComponent = props.renderItem;
 
   return (
     <div className="alphabet-list">

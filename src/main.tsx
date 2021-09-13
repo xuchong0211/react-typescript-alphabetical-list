@@ -17,13 +17,13 @@ export const SampleItem = ({ item }: { item?: AnyObject }) => {
 
 
 function Exmaple() {
-    const complaintOptions = useMemo(() => {
+    const person = useMemo(() => {
         const options = getPersons();
         return options;
     }, ["en"]);
     // const c =  (props: { item: DataType }) =>  <SampleItem {...props}/>;
     const c =  <SampleItem />;
-    return <AlphabetList data={complaintOptions} indexTopOffset={30}>
+    return <AlphabetList data={person} indexTopOffset={30}>
         <SampleItem/>
     </AlphabetList>
 }
